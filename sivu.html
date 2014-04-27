@@ -30,18 +30,59 @@
       
       <h2>RSVP</h2>
       <p>
-        Muistathan laittaa rsvp:n erikseen jokaiselle kutsussanne mainitulle.
+        Muistattehan ilmoittaa kutsukunnastanne myös ne, jotka eivät pääse tulemaan.
+
       </p>
       <form>
-        Nimi:
-        <input type="textfield" />
-        <input type="radio" name="paasee" value="kylla" />Joo
-        <input type="radio" name="paasee" value="kylla" />Ei
-        Erikoisruokavaliot:
-        <input type="textfield" />
-        Muuta:
-        <input type="textarea" />
-        <input type="submit" value="Vastaa kutsuun"/>
+        <ul class="people">
+          <li class="person">
+            <span class="label">
+              Nimi:
+            </span>
+            <input type="text" />
+            <div>
+            <span class="label">
+              Pääsee:
+            </span>              
+              <input type="radio" name="paasee" value="kylla" />Joo
+              <input type="radio" name="paasee" value="kylla" />Ei
+            </div>
+            <span class="label">
+              Erikoisruokavaliot:
+            </span>
+            <input type="text" />
+          </li>
+          <li class="person">
+            <span class="label">
+              Nimi:
+            </span>
+            <input type="text" />
+            <div>
+            <span class="label">
+              Pääsee:
+            </span>              
+              <input type="radio" name="paasee" value="kylla" />Joo
+              <input type="radio" name="paasee" value="kylla" />Ei
+            </div>
+            <span class="label">
+              Erikoisruokavaliot:
+            </span>
+            <input type="text" />
+          </li>
+
+        </ul>
+        <div class="addperson">[+] Lisää henkilö</div>
+
+        <div>
+          <span class="label">
+            Muuta:
+          </span>
+          <textarea></textarea>
+        </div>
+        <div>
+          <input type="submit" value="Vastaa kutsuun"/>
+        </div>
+        <div class="clearfix"></div>
       </form>
     </div>
   </body>

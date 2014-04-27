@@ -1,5 +1,19 @@
 @import "fonts";
 
+$text_color: #5F4C0B;
+$bg_color1: #FBF8EF;
+$bg_color2: #F8F3E1;
+
+ul, li {
+    list-style:none;
+    margin: 0;
+    padding: 0;
+}
+
+.clearfix {
+    clear:both;
+}
+
 h1, h2, h3, h4, h5 {
     font-family: "tangerinebold";
     font-weight:lighter;
@@ -12,18 +26,54 @@ h1 {
 }
 
 body {
-    color:#5F4C0B;
-    background-color:#FBF8EF;
+    color:$text_color;
+    background-color:$bg_color1;
     line-height: 1.9em;
     font-family: "sans";
     
     > div {
-        background-color:#F8F3E1;
-        //background-color:yellow;
+        background-color:$bg_color2;
         max-width:500px;
         margin: 50px auto;
         padding: 60px 50px;
         text-align:center;
+        position:relative;
+        form {
+            text-align: left;
+            .label {
+                text-align:right;
+                display: inline-block;
+                padding-right:20px;
+                width: 150px;
+            }
+            .people {
+                .person {
+                    margin-bottom:30px;
+                }
+            }
+            textarea, input[type="text"] {
+                width:300px;
+                background-color:$bg_color1;
+            }
+
+            textarea {
+                height:150px;
+                vertical-align:top;
+            }
+
+            input[type="submit"] {
+                margin-top:30px;
+                float:right;
+                margin-right:20px;
+            }
+            .addperson {
+                text-style:underline;
+                cursor: pointer;
+                text-align: center;
+                font-weight: bold;
+                margin: -25px auto 20px auto;
+            }
+        }
     }
 
     #map {
