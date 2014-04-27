@@ -1,2 +1,4 @@
 /.sass-cache/
 /style.css
+/.cabal-sandbox/
+/cabal.sandbox.config
