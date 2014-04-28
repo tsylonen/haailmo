@@ -48,7 +48,11 @@ body {
             }
             .people {
                 .person {
+                    display: none;
                     margin-bottom:30px;
+                }
+                .person1, .person2 {
+                    display:block;
                 }
             }
             textarea, input[type="text"] {
