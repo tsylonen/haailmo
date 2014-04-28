@@ -2,3 +2,6 @@
 /style.css
 /.cabal-sandbox/
 /cabal.sandbox.config
+/dist/
+/static/.sass-cache/
+/static/style.css
