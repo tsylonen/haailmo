@@ -14,6 +14,7 @@ main = serve Nothing myApp
 myApp :: ServerPart Response
 myApp = msum [
   dir "form" formHandler
+  , dir "kiitos" $ serveFile (asContentType "text/html") "static/kiitos.html"
   , static
   ]
 static :: ServerPart Response
@@ -21,5 +22,7 @@ static =
   serveDirectory EnableBrowsing ["sivu.html"] "static"
 
 formHandler :: ServerPart Response
-formHandler = undefined
+formHandler = do
+  seeOther ("/kiitos" :: String) (toResponse())
+  
 
