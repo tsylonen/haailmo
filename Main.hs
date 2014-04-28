@@ -2,11 +2,11 @@
 
 module Main where
 
-import Control.Applicative ((<$>), optional)
-import Data.Maybe (fromMaybe)
-import Data.Text (Text)
-import Data.Text.Lazy (unpack)
 import Happstack.Lite
+import Data.Text.Lazy (pack, Text)
+
+data Rsvp = Rsvp {name :: Text, coming :: Bool, diet :: Text}
+            deriving (Show)
 
 main :: IO ()
 main = serve Nothing myApp
@@ -21,8 +21,20 @@ static :: ServerPart Response
 static =
   serveDirectory EnableBrowsing ["sivu.html"] "static"
 
+textToBool :: Text -> Bool
+textToBool "1" = True
+textToBool _   = False
+
 formHandler :: ServerPart Response
 formHandler = do
-  seeOther ("/kiitos" :: String) (toResponse())
+  method [POST, GET]
+  name1 <- lookText "nimi1"
+  rsvp1 <- lookText "rsvp1"
+  diet1 <- lookText "valio1"
+  let t = Rsvp name1 (textToBool rsvp1) diet1
+  other <- lookText "muuta"
+  return $ toResponse (show t)
+
+
   
 
