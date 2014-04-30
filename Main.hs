@@ -3,16 +3,13 @@
   TemplateHaskell, TypeFamilies, RecordWildCards
   ,ScopedTypeVariables, OverloadedStrings#-}
 
-
 module Main where
 
 import Happstack.Lite
-import Data.Text.Lazy (pack, Text)
-
+import Data.Text.Lazy (Text)
 
 import Control.Applicative  ( (<$>) )
 import Control.Exception    ( bracket )
-import Control.Monad        ( msum )
 import Control.Monad.Reader ( ask )
 import Control.Monad.State  ( get, put )
 import Data.Data            ( Data, Typeable )
@@ -38,7 +35,6 @@ $(deriveSafeCopy 0 'base ''Rsvp)
 $(deriveSafeCopy 0 'base ''RsvpGroup)
 $(deriveSafeCopy 0 'base ''AppState)
 
-
 addRsvpGroup :: RsvpGroup -> Update AppState [RsvpGroup]
 addRsvpGroup g =
   do state@AppState{..} <- get
@@ -52,14 +48,24 @@ peekState = getRsvpGroups <$> ask
 $(makeAcidic ''AppState ['addRsvpGroup, 'peekState])
 
 main :: IO ()
-main = serve Nothing myApp
+main = runAcid
 
-myApp :: ServerPart Response
-myApp = msum [
-  dir "form" formHandler
-  , dir "kiitos" $ serveFile (asContentType "text/html") "static/kiitos.html"
-  , static
-  ]
+acidApp :: AcidState AppState -> ServerPart Response
+acidApp acid = do
+  state <- query' acid PeekState  
+  msum [
+    dir "form" $ formHandler acid
+    ,dir "state" $ ok $ toResponse $ show state
+    , dir "kiitos" $ serveFile (asContentType "text/html") "static/kiitos.html"
+    ,static
+    ]
+
+runAcid :: IO ()
+runAcid =
+  bracket (openLocalState initialAppState)
+  createCheckpointAndClose
+  (serve Nothing . acidApp)
+
 static :: ServerPart Response
 static =
   serveDirectory EnableBrowsing ["sivu.html"] "static"
@@ -82,12 +88,13 @@ getRsvpByPostfix pfix = getRsvp n r d
         r = "rsvp" ++ pfix
         d = "valio" ++ pfix
 
-formHandler :: ServerPart Response
-formHandler = do
+formHandler :: AcidState AppState -> ServerPart Response
+formHandler acid = do
   method [POST, GET]
   rsvps <- mapM getRsvpByPostfix ["1", "2", "3", "4", "5", "6"]
   other <- lookText "muuta"
   let rsvps' = filter (\r -> getName r /= "") rsvps
       rsvpgroup = RsvpGroup rsvps' other
-  return $ toResponse (show rsvpgroup)
-
+  _ <- update' acid (AddRsvpGroup rsvpgroup)
+--  return $ toResponse (show rsvpgroup)
+  seeOther ("kiitos" :: String) (toResponse())

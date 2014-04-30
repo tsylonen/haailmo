@@ -5,3 +5,4 @@
 /dist/
 /static/.sass-cache/
 /static/style.css
+/state/
