@@ -4,7 +4,9 @@ module Main where
 
 import Model
 
-import Happstack.Lite
+import Happstack.Server
+
+import Control.Monad (msum)
 import Data.Text.Lazy (Text)
 
 import Control.Exception    ( bracket )
@@ -17,6 +19,7 @@ main = runAcid
 
 acidApp :: AcidState AppState -> ServerPart Response
 acidApp acid = do
+  decodeBody $ defaultBodyPolicy "/tmp/" 0 1000 1000
   state <- query' acid PeekState  
   msum [
     dir "form" $ formHandler acid
@@ -29,7 +32,7 @@ runAcid :: IO ()
 runAcid =
   bracket (openLocalState initialAppState)
   createCheckpointAndClose
-  (serve Nothing . acidApp)
+  (simpleHTTP nullConf . acidApp)
 
 static :: ServerPart Response
 static =
