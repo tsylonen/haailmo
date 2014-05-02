@@ -8,6 +8,7 @@ import Happstack.Server
 
 import Control.Monad (msum)
 import Data.Text.Lazy (Text)
+import System.Environment(getArgs)
 
 import Control.Exception    ( bracket )
 import Data.Acid            ( AcidState, openLocalState )
@@ -15,7 +16,11 @@ import Data.Acid.Advanced   ( query', update' )
 import Data.Acid.Local      ( createCheckpointAndClose )
 
 main :: IO ()
-main = runAcid
+main = do
+  args <- getArgs
+  let p = read . head $ args
+      conf = Conf p Nothing Nothing 1000 Nothing 
+  runAcid conf
 
 acidApp :: AcidState AppState -> ServerPart Response
 acidApp acid = do
@@ -28,11 +33,11 @@ acidApp acid = do
     ,static
     ]
 
-runAcid :: IO ()
-runAcid =
+runAcid :: Conf -> IO ()
+runAcid c =
   bracket (openLocalState initialAppState)
   createCheckpointAndClose
-  (simpleHTTP nullConf . acidApp)
+  (simpleHTTP c . acidApp)
 
 static :: ServerPart Response
 static =
