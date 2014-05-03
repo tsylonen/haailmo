@@ -11,10 +11,8 @@ import Control.Applicative  ( (<$>) )
 import Control.Monad.Reader ( ask )
 import Control.Monad.State  ( get, put )
 import Data.Data            ( Data, Typeable )
-import Data.Acid            ( AcidState, Query, Update
-                            , makeAcidic, openLocalState )
-import Data.Acid.Advanced   ( query', update' )
-import Data.Acid.Local      ( createCheckpointAndClose )
+import Data.Acid            ( Query, Update
+                            , makeAcidic )
 import Data.SafeCopy        ( base, deriveSafeCopy )
 
 data Rsvp = Rsvp {getName :: Text, getComing :: Bool, getDiet :: Text}

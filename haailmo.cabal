@@ -15,6 +15,7 @@ executable "haailmo"
                    ,acid-state
                    ,safecopy
                    ,mtl
+                   ,blaze-html
     default-language: Haskell2010
 
     ghc-options: -O2 -Wall -fwarn-tabs
