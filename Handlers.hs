@@ -1,12 +1,20 @@
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings, RecordWildCards #-}
 
-module Handlers (static, formHandler) where
+module Handlers (static, formHandler, showState) where
+
+import Data.Monoid (mconcat)
 
 import Model
 import Happstack.Server
 import Data.Text.Lazy (Text)
 import Data.Acid            ( AcidState )
 import Data.Acid.Advanced   ( query', update' )
+import Control.Monad (forM_)
+
+
+import Text.Blaze.Html5 (Html, toHtml)
+import qualified Text.Blaze.Html5 as H
+import qualified Text.Blaze.Html5.Attributes as A
 
 
 static :: ServerPart Response
@@ -33,10 +41,34 @@ getRsvpByPostfix pfix = getRsvp n r d
 
 formHandler :: AcidState AppState -> ServerPart Response
 formHandler acid = do
-  method [POST, GET]
+  method [POST]
   rsvps <- mapM getRsvpByPostfix ["1", "2", "3", "4", "5", "6"]
   other <- lookText "muuta"
   let rsvps' = filter (\r -> getName r /= "") rsvps
       rsvpgroup = RsvpGroup rsvps' other
-  _ <- update' acid (AddRsvpGroup rsvpgroup)
+  update' acid (AddRsvpGroup rsvpgroup)
   seeOther ("kiitos" :: String) (toResponse())
+
+showState :: AcidState AppState -> ServerPart Response
+showState acid = do
+  groups <- query' acid PeekState
+  ok $ toResponse $ H.ul $
+    mconcat $ map (H.li . renderRsvpGroup) groups
+    
+
+renderRsvpGroup :: RsvpGroup -> Html
+renderRsvpGroup rg@RsvpGroup{..} = do
+  H.ul $
+      mconcat [H.li $ renderRsvp r | r <- getRsvps]
+  H.p $ toHtml getOther
+  
+renderRsvp :: Rsvp -> Html
+renderRsvp r@Rsvp{..} = do
+  toHtml getName
+  toHtml (", " :: String)
+  toHtml getComing
+  toHtml (", " :: String)
+  toHtml getDiet
+
+  
+  

@@ -10,7 +10,7 @@ import System.Environment(getArgs)
 
 import Control.Exception    ( bracket )
 import Data.Acid            ( AcidState, openLocalState )
-import Data.Acid.Advanced   ( query')
+--import Data.Acid.Advanced   ( query')
 import Data.Acid.Local      ( createCheckpointAndClose )
 
 main :: IO ()
@@ -23,10 +23,9 @@ main = do
 acidApp :: AcidState AppState -> ServerPart Response
 acidApp acid = do
   decodeBody $ defaultBodyPolicy "/tmp/" 0 1000 1000
-  state <- query' acid PeekState  
   msum [
     dir "form" $ formHandler acid
-    ,dir "state" $ ok $ toResponse $ show state
+    ,dir "state" $ showState acid
     , dir "kiitos" $ serveFile (asContentType "text/html") "static/kiitos.html"
     ,static
     ]
