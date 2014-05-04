@@ -52,18 +52,25 @@ formHandler acid = do
 showState :: AcidState AppState -> ServerPart Response
 showState acid = do
   groups <- query' acid PeekState
-  ok $ toResponse $ H.ul $
-    mconcat $ map (H.li . renderRsvpGroup) groups
+  ok $ toResponse $ stateView groups
+  
+stateView :: [RsvpGroup] -> Html
+stateView groups =
+  H.docTypeHtml $
+  H.ul $
+  mconcat $ map (H.li . renderRsvpGroup) groups
+    
+
     
 
 renderRsvpGroup :: RsvpGroup -> Html
-renderRsvpGroup rg@RsvpGroup{..} = do
+renderRsvpGroup RsvpGroup{..} = do
   H.ul $
       mconcat [H.li $ renderRsvp r | r <- getRsvps]
   H.p $ toHtml getOther
   
 renderRsvp :: Rsvp -> Html
-renderRsvp r@Rsvp{..} = do
+renderRsvp Rsvp{..} = do
   toHtml getName
   toHtml (", " :: String)
   toHtml getComing
